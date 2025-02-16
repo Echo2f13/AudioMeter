@@ -21,6 +21,8 @@ class DatabaseHelper {
           CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
+            name TEXT NOT NULL,
+            gender TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
             dob TEXT NOT NULL
@@ -31,6 +33,7 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE IF NOT EXISTS test_results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            test_number INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             left_ear INTEGER CHECK(left_ear BETWEEN 0 AND 100),
             right_ear INTEGER CHECK(right_ear BETWEEN 0 AND 100),
@@ -75,6 +78,8 @@ class DatabaseHelper {
 
   Future<int> insertUser(
     String username,
+    String name,
+    String gender,
     String email,
     String password,
     String dob,
@@ -82,6 +87,8 @@ class DatabaseHelper {
     final db = await database;
     return await db.insert('users', {
       'username': username,
+      'name': name,
+      'gender': gender,
       'email': email,
       'password': password,
       'dob': dob,
@@ -100,6 +107,7 @@ class DatabaseHelper {
 
   Future<int> insertTestResult(
     int userId,
+    int test_number,
     int leftEar,
     int rightEar,
     int total,
@@ -108,6 +116,7 @@ class DatabaseHelper {
     final db = await database;
     return await db.insert('test_results', {
       'user_id': userId,
+      'test_number': test_number,
       'left_ear': leftEar,
       'right_ear': rightEar,
       'total': total,

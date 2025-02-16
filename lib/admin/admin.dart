@@ -66,7 +66,14 @@ class _AdminPageState extends State<AdminPage> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               users.isNotEmpty
-                  ? _buildTable(users, ['id', 'username', 'email', 'dob'])
+                  ? _buildTable(users, [
+                    'id',
+                    'username',
+                    'name',
+                    'gender',
+                    'email',
+                    'dob',
+                  ])
                   : const Text("No users found"),
               const SizedBox(height: 20),
               const Text(
@@ -76,6 +83,7 @@ class _AdminPageState extends State<AdminPage> {
               testResults.isNotEmpty
                   ? _buildTable(testResults, [
                     'id',
+                    'test_number',
                     'user_id',
                     'left_ear',
                     'right_ear',

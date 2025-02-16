@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../services/database.dart' as db_service;
 import 'login.dart';
 import 'delete_user.dart';
@@ -38,6 +39,21 @@ class _HomePageMainState extends State<HomePageMain> {
     setState(() {
       _testResults = results.reversed.toList(); // ⬆️ Forces latest test on top
     });
+  }
+
+  int _calculateAge(String dob) {
+    try {
+      DateTime birthDate = DateFormat('yyyy-MM-dd').parse(dob);
+      DateTime today = DateTime.now();
+      int age = today.year - birthDate.year;
+      if (today.month < birthDate.month ||
+          (today.month == birthDate.month && today.day < birthDate.day)) {
+        age--;
+      }
+      return age < 1 ? 0 : age;
+    } catch (e) {
+      return 0;
+    }
   }
 
   void _logout() {
@@ -95,12 +111,27 @@ class _HomePageMainState extends State<HomePageMain> {
                       style: const TextStyle(fontSize: 18),
                     ),
                     Text(
+                      "Name: ${_userData!['name']}",
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    Text(
+                      "Gender: ${_userData!['gender']}",
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    Text(
                       "Email: ${_userData!['email']}",
                       style: const TextStyle(fontSize: 18),
                     ),
                     Text(
                       "Date of Birth: ${_userData!['dob']}",
                       style: const TextStyle(fontSize: 18),
+                    ),
+                    Text(
+                      "Age: ${_calculateAge(_userData!['dob'])} years",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     Center(
@@ -126,7 +157,7 @@ class _HomePageMainState extends State<HomePageMain> {
                             dataSource: _testResults,
                             xValueMapper:
                                 (Map<String, dynamic> result, _) =>
-                                    result['id'].toString(),
+                                    result['test_number'].toString(),
                             yValueMapper:
                                 (Map<String, dynamic> result, _) =>
                                     result['total'],
@@ -161,10 +192,30 @@ class _HomePageMainState extends State<HomePageMain> {
                                       ),
                                       child: ListTile(
                                         title: Text(
-                                          "Test Date: ${result['current_date']}",
+                                          "Test ${result['test_number']}",
                                         ),
-                                        subtitle: Text(
-                                          "Left Ear: ${result['left_ear']}, Right Ear: ${result['right_ear']}, Total: ${result['total']}",
+                                        subtitle: RichText(
+                                          text: TextSpan(
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black,
+                                            ), // Default style
+                                            children: [
+                                              TextSpan(
+                                                text:
+                                                    "Left Ear: ${result['left_ear']}, Right Ear: ${result['right_ear']}, Total: ${result['total']}\n",
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ), // Bigger & bold
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    "Date: ${DateFormat('dd-MM-yy').format(DateTime.parse(result['current_date']))}; "
+                                                    "Time: ${DateFormat('hh:mm a').format(DateTime.parse(result['current_date']))}",
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );

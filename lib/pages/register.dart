@@ -29,6 +29,8 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final dbHelper = DatabaseHelper();
   final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
@@ -44,7 +46,7 @@ class _RegisterPageState extends State<RegisterPage> {
       lastDate: DateTime.now(),
     );
 
-    if (selected != null && selected != pickedDate) {
+    if (selected != null) {
       setState(() {
         pickedDate = selected;
         _dobController.text =
@@ -54,42 +56,41 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _registerUser() async {
-    try {
-      final db = await dbHelper.database; // Ensure DB is created
-      print("✅ Database created successfully!");
+    if (_usernameController.text.isEmpty ||
+        _nameController.text.isEmpty ||
+        _genderController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _dobController.text.isEmpty) {
+      setState(() {
+        _statusMessage = "❌ All fields are required!";
+      });
+      return;
+    }
 
+    try {
+      final db = await dbHelper.database;
       int userId = await dbHelper.insertUser(
         _usernameController.text,
+        _nameController.text,
+        _genderController.text,
         _emailController.text,
         _passwordController.text,
         _dobController.text,
       );
 
-      if (_usernameController.text.isEmpty ||
-          _emailController.text.isEmpty ||
-          _passwordController.text.isEmpty ||
-          _dobController.text.isEmpty) {
-        setState(() {
-          _statusMessage = "❌ All fields are required!";
-        });
-        return;
-      }
-
       if (userId > 0) {
-        print("✅ User registered with ID: $userId");
         setState(() {
-          _statusMessage = "User registered successfully! ID: $userId";
+          _statusMessage = "✅ User registered successfully! ID: $userId";
         });
       } else {
-        print("❌ Failed to register user.");
         setState(() {
-          _statusMessage = "Failed to register user. Try again.";
+          _statusMessage = "❌ Failed to register user. Try again.";
         });
       }
     } catch (e) {
-      print("❌ Error: $e");
       setState(() {
-        _statusMessage = "Error: $e";
+        _statusMessage = "❌ Error: $e";
       });
     }
   }
@@ -97,29 +98,86 @@ class _RegisterPageState extends State<RegisterPage> {
   void _back() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => MyApp()),
+      MaterialPageRoute(builder: (context) => const MyApp()),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _genderController.text = "Male"; // Default gender
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Register'), backgroundColor: Colors.blue),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
+      appBar: AppBar(
+        title: const Text('Register'),
+        backgroundColor: Colors.blue,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: _usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
+              decoration: const InputDecoration(labelText: 'Username'),
             ),
             TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(labelText: 'Full Name'),
+            ),
+
+            // Gender Selection
+            const SizedBox(height: 16),
+            const Text(
+              "Gender",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            Row(
+              children: [
+                Radio<String>(
+                  value: "Male",
+                  groupValue: _genderController.text,
+                  onChanged: (value) {
+                    setState(() {
+                      _genderController.text = value!;
+                    });
+                  },
+                ),
+                const Text("Male"),
+                Radio<String>(
+                  value: "Female",
+                  groupValue: _genderController.text,
+                  onChanged: (value) {
+                    setState(() {
+                      _genderController.text = value!;
+                    });
+                  },
+                ),
+                const Text("Female"),
+                Radio<String>(
+                  value: "Other",
+                  groupValue: _genderController.text,
+                  onChanged: (value) {
+                    setState(() {
+                      _genderController.text = value!;
+                    });
+                  },
+                ),
+                const Text("Other"),
+              ],
+            ),
+
+            TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             TextField(
@@ -127,22 +185,26 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(
                 labelText: 'Date of Birth',
                 suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
+                  icon: const Icon(Icons.calendar_today),
                   onPressed: () => _selectDate(context),
                 ),
               ),
               readOnly: true,
             ),
-            SizedBox(height: 20),
-            ElevatedButton(onPressed: _registerUser, child: Text('Register')),
-            SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _registerUser,
+              child: const Text('Register'),
+            ),
+            const SizedBox(height: 20),
+
             Text(
               _statusMessage,
               style: TextStyle(
-                color:
-                    _statusMessage.contains("Error")
-                        ? Colors.red
-                        : Colors.green,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: _statusMessage.contains("❌") ? Colors.red : Colors.green,
               ),
             ),
           ],

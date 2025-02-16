@@ -69,6 +69,7 @@ class _TestPageState extends State<TestPage> {
     await db.execute('''
           CREATE TABLE IF NOT EXISTS test_results (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            test_number INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             left_ear INTEGER CHECK(left_ear BETWEEN 0 AND 100),
             right_ear INTEGER CHECK(right_ear BETWEEN 0 AND 100),
@@ -108,11 +109,27 @@ class _TestPageState extends State<TestPage> {
     int totalScore =
         leftEarLow + leftEarHigh + rightEarLow + rightEarHigh + wordScore;
 
+    // final String currentDate = DateTime.now().toIso8601String();
+    final db = await dbHelper.database;
+
+    // Fetch the last test_number for this user
+    final List<Map<String, dynamic>> lastTest = await db.query(
+      'test_results',
+      columns: ['test_number'],
+      where: 'user_id = ?',
+      whereArgs: [widget.userId],
+      orderBy: 'test_number DESC',
+      limit: 1,
+    );
+    final int newTestNumber =
+        (lastTest.isNotEmpty ? lastTest.first['test_number'] + 1 : 1);
+
     try {
       final String currentDate = DateTime.now().toIso8601String();
       final db = await dbHelper.database;
       await db.insert('test_results', {
         'user_id': widget.userId,
+        'test_number': newTestNumber,
         'left_ear': leftEarLow + leftEarHigh,
         'right_ear': rightEarLow + rightEarHigh,
         'total': totalScore,
