@@ -117,6 +117,29 @@ class _HomePageMainState extends State<HomePageMain> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(
+                      height: 200, // Adjust the height as needed
+                      child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(isInversed: true),
+                        series: <CartesianSeries>[
+                          AreaSeries<Map<String, dynamic>, String>(
+                            dataSource: _testResults,
+                            xValueMapper:
+                                (Map<String, dynamic> result, _) =>
+                                    result['id'].toString(),
+                            yValueMapper:
+                                (Map<String, dynamic> result, _) =>
+                                    result['total'],
+                            color: Colors.blue.withOpacity(
+                              0.3,
+                            ), // Area fill color
+                            borderColor:
+                                Colors.blue, // Border color of the area
+                            borderWidth: 2, // Border width
+                          ),
+                        ],
+                      ),
+                    ),
                     _testResults.isEmpty
                         ? const Text(
                           "No test data found",
