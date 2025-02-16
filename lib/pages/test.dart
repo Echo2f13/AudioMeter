@@ -187,7 +187,7 @@ class _TestPageState extends State<TestPage> {
                 });
               },
               "audio/left_ear_low.mp3",
-              volume: 0.3, // Low volume
+              volume: 0.1, // Low volume
               balance: -1.0, // Left channel
             ),
             const Divider(color: Colors.black, height: 20),
@@ -215,7 +215,7 @@ class _TestPageState extends State<TestPage> {
                 });
               },
               "audio/right_ear_low.mp3",
-              volume: 0.3, // Low volume
+              volume: 0.1, // Low volume
               balance: 1.0, // Right channel
             ),
             const Divider(color: Colors.black, height: 20),
@@ -243,7 +243,7 @@ class _TestPageState extends State<TestPage> {
                     onPressed:
                         () => _playAudio(
                           "audio/word_test_${i + 1}.mp3",
-                          volume: 0.3, // Low volume
+                          volume: 0.1, // Low volume
                           balance: 0.0, // Balanced (both channels)
                         ),
                     child: const Text("Play Audio"),

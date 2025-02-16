@@ -3,6 +3,7 @@ import '../services/database.dart' as db_service;
 import 'login.dart';
 import 'delete_user.dart';
 import 'test.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HomePageMain extends StatefulWidget {
   final int userId;
@@ -122,26 +123,32 @@ class _HomePageMainState extends State<HomePageMain> {
                           style: TextStyle(fontSize: 16, color: Colors.red),
                         )
                         : Expanded(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: _testResults.length,
-                            itemBuilder: (context, index) {
-                              final result = _testResults[index];
-                              return Card(
-                                elevation: 3,
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 8.0,
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: _testResults.length,
+                                  itemBuilder: (context, index) {
+                                    final result = _testResults[index];
+                                    return Card(
+                                      elevation: 3,
+                                      margin: const EdgeInsets.symmetric(
+                                        vertical: 8.0,
+                                      ),
+                                      child: ListTile(
+                                        title: Text(
+                                          "Test Date: ${result['current_date']}",
+                                        ),
+                                        subtitle: Text(
+                                          "Left Ear: ${result['left_ear']}, Right Ear: ${result['right_ear']}, Total: ${result['total']}",
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                                child: ListTile(
-                                  title: Text(
-                                    "Test Date: ${result['current_date']}",
-                                  ),
-                                  subtitle: Text(
-                                    "Left Ear: ${result['left_ear']}, Right Ear: ${result['right_ear']}, Total: ${result['total']}",
-                                  ),
-                                ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ),
                   ],
