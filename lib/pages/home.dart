@@ -77,8 +77,39 @@ class _HomePageMainState extends State<HomePageMain> {
     ).then((_) => _fetchTestResults()); // Refresh test history after returning
   }
 
+  // Logic for score-based categories and suggestions
+  String _getCategory(int score) {
+    if (score >= 10) {
+      return "Excellent Hearing";
+    } else if (score >= 8) {
+      return "Mild Hearing Loss";
+    } else if (score >= 5) {
+      return "Moderate Hearing Loss";
+    } else {
+      return "Severe Hearing Loss";
+    }
+  }
+
+  String _getSuggestion(int score) {
+    if (score >= 10) {
+      return "No issues detected, maintain good ear hygiene.";
+    } else if (score >= 8) {
+      return "Regular monitoring and preventive care are advised.";
+    } else if (score >= 5) {
+      return "Consider a professional check-up and possible hearing aids.";
+    } else {
+      return "Immediate consultation with an audiologist is recommended.";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final latestTestResult = _testResults.isNotEmpty ? _testResults[0] : null;
+    final testScore =
+        latestTestResult != null ? latestTestResult['total'] ?? 0 : 0;
+    final category = _getCategory(testScore);
+    final suggestion = _getSuggestion(testScore);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
@@ -102,54 +133,87 @@ class _HomePageMainState extends State<HomePageMain> {
                     const Text(
                       "Profile",
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    Text(
-                      "Username: ${_userData!['username']}",
-                      style: const TextStyle(fontSize: 18),
                     ),
                     Text(
                       "Name: ${_userData!['name']}",
-                      style: const TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 15),
                     ),
                     Text(
                       "Gender: ${_userData!['gender']}",
-                      style: const TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 15),
                     ),
                     Text(
-                      "Email: ${_userData!['email']}",
-                      style: const TextStyle(fontSize: 18),
+                      "Date of Birth: ${_userData!['dob']} (${_calculateAge(_userData!['dob'])} years)",
+                      style: const TextStyle(fontSize: 15),
                     ),
-                    Text(
-                      "Date of Birth: ${_userData!['dob']}",
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    Text(
-                      "Age: ${_calculateAge(_userData!['dob'])} years",
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    const Divider(color: Colors.black, height: 20),
+                    // Test result card
+                    if (latestTestResult != null) ...[
+                      Card(
+                        elevation: 5,
+                        margin: const EdgeInsets.symmetric(vertical: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              Text("score"),
+                              Text(
+                                "$testScore",
+                                style: const TextStyle(
+                                  fontSize: 80,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "$category",
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "Suggestion: $suggestion",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
+                    ],
+
+                    // Take hearing test button
                     Center(
                       child: ElevatedButton(
                         onPressed: _startTest,
                         child: const Text("Take Hearing Test"),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: const Color.fromARGB(
+                            255,
+                            255,
+                            130,
+                            58,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+
+                    // Test History section
                     const Text(
                       "Test History",
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     SizedBox(
-                      height: 200, // Adjust the height as needed
+                      height: 150, // Adjust the height as needed
                       child: SfCartesianChart(
                         primaryXAxis: CategoryAxis(isInversed: true),
                         series: <CartesianSeries>[
