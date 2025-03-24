@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../services/database.dart' as db_service;
 import 'login.dart';
 import 'delete_user.dart';
-import 'test.dart';
+import 'select_test.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HomePageMain extends StatefulWidget {
@@ -70,10 +70,24 @@ class _HomePageMainState extends State<HomePageMain> {
     );
   }
 
+  // void _startTest() {
+  //   Navigator.push(
+  //     context,
+  //     // MaterialPageRoute(builder: (context) => TestPage(userId: widget.userId)),
+  //     MaterialPageRoute(builder: (context) => TestPage(userId: widget.userId)),
+  //   ).then((_) => _fetchTestResults()); // Refresh test history after returning
+  // }
+
   void _startTest() {
+    // Replace this with the actual DOB from your user data
+    int userAge = _calculateAge(_userData!['dob']);
+
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => TestPage(userId: widget.userId)),
+      MaterialPageRoute(
+        builder:
+            (context) => SelectTestPage(userId: widget.userId, age: userAge),
+      ),
     ).then((_) => _fetchTestResults()); // Refresh test history after returning
   }
 
@@ -168,7 +182,7 @@ class _HomePageMainState extends State<HomePageMain> {
                                 ),
                               ),
                               Text(
-                                "$category",
+                                category,
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -191,7 +205,6 @@ class _HomePageMainState extends State<HomePageMain> {
                     Center(
                       child: ElevatedButton(
                         onPressed: _startTest,
-                        child: const Text("Take Hearing Test"),
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: const Color.fromARGB(
@@ -201,6 +214,7 @@ class _HomePageMainState extends State<HomePageMain> {
                             58,
                           ),
                         ),
+                        child: const Text("Take Hearing Test"),
                       ),
                     ),
 

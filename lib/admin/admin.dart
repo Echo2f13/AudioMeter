@@ -102,15 +102,15 @@ class _AdminPageState extends State<AdminPage> {
           FloatingActionButton(
             onPressed: _deleteDB,
             tooltip: 'Delete Database',
-            child: const Icon(Icons.delete),
             backgroundColor: Colors.red,
+            child: const Icon(Icons.delete),
           ),
           const SizedBox(width: 16), // Space between buttons
           FloatingActionButton(
             onPressed: _back,
             tooltip: 'Back',
-            child: const Icon(Icons.arrow_back),
             backgroundColor: Colors.blue,
+            child: const Icon(Icons.arrow_back),
           ),
         ],
       ),

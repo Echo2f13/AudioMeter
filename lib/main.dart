@@ -106,8 +106,8 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _crack,
         tooltip: 'Back',
-        child: const Icon(Icons.admin_panel_settings),
         backgroundColor: Colors.blue,
+        child: const Icon(Icons.admin_panel_settings),
       ),
     );
   }

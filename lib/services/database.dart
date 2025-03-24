@@ -107,7 +107,7 @@ class DatabaseHelper {
 
   Future<int> insertTestResult(
     int userId,
-    int test_number,
+    int testNumber,
     int leftEar,
     int rightEar,
     int total,
@@ -116,7 +116,7 @@ class DatabaseHelper {
     final db = await database;
     return await db.insert('test_results', {
       'user_id': userId,
-      'test_number': test_number,
+      'test_number': testNumber,
       'left_ear': leftEar,
       'right_ear': rightEar,
       'total': total,

@@ -213,8 +213,8 @@ class _RegisterPageState extends State<RegisterPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _back,
         tooltip: 'Back',
-        child: const Icon(Icons.arrow_back),
         backgroundColor: Colors.blue,
+        child: const Icon(Icons.arrow_back),
       ),
     );
   }
